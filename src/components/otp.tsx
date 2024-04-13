@@ -20,10 +20,11 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { OTPSchema } from "@/schemas/auth";
+import { PROCESS_MODE } from "@/config/site";
 import { Button } from "@/components/ui/button";
 import { CardWrapper } from "@/components/card-wrapper";
 
-export const OTPForm = () => {
+export const OTPForm = (props: any) => {
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<z.infer<typeof OTPSchema>>({
@@ -34,10 +35,16 @@ export const OTPForm = () => {
   });
 
   const onSubmit = (values: z.infer<typeof OTPSchema>) => {
-    // setError("");
-    // setSucces("");
-
-    startTransition(async () => {});
+    console.log("🚀 ~ onSubmit ~ values:", values);
+    startTransition(() => {
+      if (props.process.flow === PROCESS_MODE.LOGIN) {
+        props.setForm(() => PROCESS_MODE.LOGIN);
+      } else if (props.process.flow === PROCESS_MODE.REGISTER) {
+        props.setForm(() => PROCESS_MODE.PASSWORD);
+      } else if (props.process.flow === PROCESS_MODE.RESET) {
+        props.setForm(() => PROCESS_MODE.PASSWORD);
+      }
+    });
   };
 
   return (
@@ -87,13 +94,27 @@ export const OTPForm = () => {
         </form>
       </Form>
       <div className="mt-1 flex justify-between">
+        {props.process ? (
+          <Button size="sm" variant="link" className="p-0 font-normal">
+            00:30
+          </Button>
+        ) : (
+          <Button size="sm" variant="link" className="p-0 font-normal">
+            Send again?
+          </Button>
+        )}
         <Button
           size="sm"
           variant="link"
-          disabled={!true}
           className="p-0 font-normal"
+          onClick={() =>
+            props.setProcess((prev: any) => ({
+              ...prev,
+              flow: PROCESS_MODE.LOGIN,
+            }))
+          }
         >
-          Send again?
+          Back to login?
         </Button>
       </div>
     </CardWrapper>

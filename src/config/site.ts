@@ -40,3 +40,11 @@ export const AllLinks = [
   PasswordLink,
   OTPLink,
 ];
+
+export enum PROCESS_MODE {
+  LOGIN = "LOGIN",
+  REGISTER = "REGISTER",
+  RESET = "RESET",
+  OTP = "OTP",
+  PASSWORD = "PASSWORD",
+}

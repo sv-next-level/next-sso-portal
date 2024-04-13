@@ -13,12 +13,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { PROCESS_MODE } from "@/config/site";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { RegisterSchema } from "@/schemas/auth";
 import { CardWrapper } from "@/components/card-wrapper";
 
-export const RegisterForm = () => {
+export const RegisterForm = (props: any) => {
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<z.infer<typeof RegisterSchema>>({
@@ -31,18 +32,11 @@ export const RegisterForm = () => {
   });
 
   const onSubmit = (values: z.infer<typeof RegisterSchema>) => {
-    // setError("");
-    // setSucces("");
-
-    startTransition(async () => {
-      // const origin =
-      //   typeof window !== undefined && window.location.origin
-      //     ? window.location.origin
-      //     : "";
-      // await register(origin, values).then((data) => {
-      //   setError(data.error);
-      //   setSucces(data.success);
-      // });
+    console.log("🚀 ~ onSubmit ~ values:", values);
+    startTransition(() => {
+      if (props.process.flow === PROCESS_MODE.REGISTER) {
+        props.setForm(() => PROCESS_MODE.OTP);
+      }
     });
   };
 
@@ -114,8 +108,18 @@ export const RegisterForm = () => {
         </form>
       </Form>
       <div className="mt-1 flex justify-between">
-        <Button size="sm" variant="link" className="p-0 font-normal">
-          Already have an account?
+        <Button
+          size="sm"
+          variant="link"
+          className="p-0 font-normal"
+          onClick={() =>
+            props.setProcess((prev: any) => ({
+              ...prev,
+              flow: PROCESS_MODE.LOGIN,
+            }))
+          }
+        >
+          Back to login?
         </Button>
       </div>
     </CardWrapper>

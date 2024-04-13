@@ -13,12 +13,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { PROCESS_MODE } from "@/config/site";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { CreatePasswordSchema } from "@/schemas/auth";
 import { CardWrapper } from "@/components/card-wrapper";
 
-export const CreatePasswordForm = () => {
+export const CreatePasswordForm = (props: any) => {
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<z.infer<typeof CreatePasswordSchema>>({
@@ -30,23 +31,13 @@ export const CreatePasswordForm = () => {
   });
 
   const onSubmit = (values: z.infer<typeof CreatePasswordSchema>) => {
-    // setError("");
-    // setSucces("");
-
-    startTransition(async () => {
-      // createPassword(token, values)
-      //   .then((data: any) => {
-      //     if (data.error) {
-      //       setError(data.error);
-      //     }
-      //     if (data.success) {
-      //       setSucces(data.success);
-      //       router.push(authLinks.login.href);
-      //     }
-      //   })
-      //   .catch(() => {
-      //     setError("Something went wrong!");
-      //   });
+    console.log("🚀 ~ onSubmit ~ values:", values);
+    startTransition(() => {
+      if (props.process.flow === PROCESS_MODE.REGISTER) {
+        props.setForm(() => PROCESS_MODE.LOGIN);
+      } else if (props.process.flow === PROCESS_MODE.RESET) {
+        props.setForm(() => PROCESS_MODE.LOGIN);
+      }
     });
   };
 
@@ -97,6 +88,34 @@ export const CreatePasswordForm = () => {
           </Button>
         </form>
       </Form>
+      <div className="mt-1 flex justify-between">
+        <Button
+          size="sm"
+          variant="link"
+          className="p-0 font-normal"
+          onClick={() =>
+            props.setProcess((prev: any) => ({
+              ...prev,
+              flow: PROCESS_MODE.REGISTER,
+            }))
+          }
+        >
+          Create new account?
+        </Button>
+        <Button
+          size="sm"
+          variant="link"
+          className="p-0 font-normal"
+          onClick={() =>
+            props.setProcess((prev: any) => ({
+              ...prev,
+              flow: PROCESS_MODE.LOGIN,
+            }))
+          }
+        >
+          Back to login?
+        </Button>
+      </div>
     </CardWrapper>
   );
 };

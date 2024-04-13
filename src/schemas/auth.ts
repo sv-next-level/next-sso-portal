@@ -10,7 +10,6 @@ export const LoginSchema = z.object({
   portal: z.string({
     required_error: "Please select an portal to login.",
   }),
-  code: z.string().min(6, { message: "It should be 6 numbers" }).optional(),
 });
 // .refine((data) => !/[^\d]/.test(data?.code as string), {
 //   message: "It should be numbers only",

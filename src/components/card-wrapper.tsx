@@ -20,7 +20,7 @@ export const CardWrapper = ({
   footerConent,
 }: CardWrapperProps) => {
   return (
-    <Card className="relative min-h-[650px] min-w-[450px] px-5 shadow-md">
+    <Card className="relative min-h-[550px] min-w-[300px] border-none shadow-2xl sm:h-[650px] sm:w-[450px] sm:px-4">
       <CardHeader>
         <Header label={headerLabel} />
       </CardHeader>

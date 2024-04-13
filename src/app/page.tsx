@@ -74,8 +74,16 @@ export default function Home() {
   }, [form]);
 
   return (
-    <main className="container flex min-h-screen flex-col items-center justify-center border-4 border-red-500">
-      {currentForm}
+    <main className="container flex min-h-screen items-center justify-center lg:grid lg:grid-cols-2">
+      <div className="hidden lg:block">
+        <div className="flex flex-col items-center">
+          <h1 className="text-7xl font-bold text-neutral-900">Next Level</h1>
+          <p className="text-4xl font-medium text-neutral-700">
+            New way of trading
+          </p>
+        </div>
+      </div>
+      <div className="flex justify-center">{currentForm}</div>
     </main>
   );
 }

@@ -42,36 +42,34 @@ export const ResetPasswordForm = () => {
   };
 
   return (
-    <>
-      <CardWrapper headerLabel="Reset your password">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <div className="space-y-4">
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        type="email"
-                        disabled={isPending}
-                        placeholder="john.doe@example.com"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <Button type="submit" disabled={isPending} className="w-full">
-              Proceed
-            </Button>
-          </form>
-        </Form>
-      </CardWrapper>
-    </>
+    <CardWrapper headerLabel="Reset your password">
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <div className="space-y-4">
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      type="email"
+                      disabled={isPending}
+                      placeholder="john.doe@example.com"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <Button type="submit" disabled={isPending} className="w-full">
+            Proceed
+          </Button>
+        </form>
+      </Form>
+    </CardWrapper>
   );
 };

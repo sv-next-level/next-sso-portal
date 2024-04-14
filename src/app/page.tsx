@@ -77,9 +77,13 @@ export default function Home() {
     <main className="container flex min-h-screen items-center justify-center lg:grid lg:grid-cols-2">
       <div className="hidden lg:block">
         <div className="flex flex-col items-center">
-          <h1 className="text-7xl font-bold text-neutral-900">Next Level</h1>
-          <p className="text-4xl font-medium text-neutral-700">
-            New way of trading
+          {/* <h1 className="text-5xl font-bold text-neutral-900">Next Level</h1> */}
+          <h1 className="text-4xl font-medium text-neutral-800">
+            Trade smarter, not harder
+          </h1>
+          <p className="text-lg font-light text-neutral-700">
+            Our AI-powered platform personalizes strategies and simplifies
+            investing.
           </p>
         </div>
       </div>

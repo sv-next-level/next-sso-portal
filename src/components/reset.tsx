@@ -13,11 +13,14 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { RESET } from "@/const/label";
 import { PROCESS_MODE } from "@/config/site";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { NAVIGATION } from "@/const/navigation";
 import { ResetPasswordSchema } from "@/schemas/auth";
 import { CardWrapper } from "@/components/card-wrapper";
+import { BtnProceed } from "@/components/button/proceed";
+import { BtnNavigation } from "@/components/button/navigation";
 
 export const ResetPasswordForm = (props: any) => {
   const [isPending, startTransition] = useTransition();
@@ -25,7 +28,7 @@ export const ResetPasswordForm = (props: any) => {
   const form = useForm<z.infer<typeof ResetPasswordSchema>>({
     resolver: zodResolver(ResetPasswordSchema),
     defaultValues: {
-      email: "",
+      [RESET.EMAIL.NAME]: "",
     },
   });
 
@@ -39,22 +42,22 @@ export const ResetPasswordForm = (props: any) => {
   };
 
   return (
-    <CardWrapper headerLabel="Reset your password">
+    <CardWrapper headerLabel={RESET.HEADER}>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-4">
             <FormField
               control={form.control}
-              name="email"
+              name={RESET.EMAIL.NAME}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>{RESET.EMAIL.LABEL}</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
-                      type="email"
+                      type={RESET.EMAIL.TYPE}
                       disabled={isPending}
-                      placeholder="john.doe@example.com"
+                      placeholder={RESET.EMAIL.PLACEHOLDER}
                     />
                   </FormControl>
                   <FormMessage />
@@ -62,38 +65,28 @@ export const ResetPasswordForm = (props: any) => {
               )}
             />
           </div>
-          <Button type="submit" disabled={isPending} className="w-full">
-            Proceed
-          </Button>
+          <BtnProceed disabled={isPending} />
         </form>
       </Form>
       <div className="mt-1 flex justify-between">
-        <Button
-          size="sm"
-          variant="link"
-          className="p-0 font-normal"
+        <BtnNavigation
+          label={NAVIGATION.REGISTER}
           onClick={() =>
             props.setProcess((prev: any) => ({
               ...prev,
               flow: PROCESS_MODE.REGISTER,
             }))
           }
-        >
-          Create new account?
-        </Button>
-        <Button
-          size="sm"
-          variant="link"
-          className="p-0 font-normal"
+        />
+        <BtnNavigation
+          label={NAVIGATION.LOGIN}
           onClick={() =>
             props.setProcess((prev: any) => ({
               ...prev,
               flow: PROCESS_MODE.LOGIN,
             }))
           }
-        >
-          Back to login?
-        </Button>
+        />
       </div>
     </CardWrapper>
   );

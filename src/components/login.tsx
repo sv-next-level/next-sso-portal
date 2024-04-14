@@ -20,11 +20,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { LOGIN } from "@/const/label";
 import { LoginSchema } from "@/schemas/auth";
 import { PROCESS_MODE } from "@/config/site";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { NAVIGATION } from "@/const/navigation";
 import { CardWrapper } from "@/components/card-wrapper";
+import { BtnProceed } from "@/components/button/proceed";
+import { BtnNavigation } from "@/components/button/navigation";
 
 export const LoginForm = (props: any) => {
   const [isPending, startTransition] = useTransition();
@@ -32,9 +35,9 @@ export const LoginForm = (props: any) => {
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
-      email: "",
-      password: "",
-      portal: "dashboard",
+      [LOGIN.EMAIL.NAME]: "",
+      [LOGIN.PASSWORD.NAME]: "",
+      [LOGIN.PORTAL.NAME]: "dashboard",
     },
   });
 
@@ -48,22 +51,22 @@ export const LoginForm = (props: any) => {
   };
 
   return (
-    <CardWrapper headerLabel="Welcome back">
+    <CardWrapper headerLabel={LOGIN.HEADER}>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-4">
             <FormField
               control={form.control}
-              name="email"
+              name={LOGIN.EMAIL.NAME}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>{LOGIN.EMAIL.LABEL}</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
-                      type="email"
+                      type={LOGIN.EMAIL.TYPE}
                       disabled={isPending}
-                      placeholder="john.doe@example.com"
+                      placeholder={LOGIN.EMAIL.PLACEHOLDER}
                     />
                   </FormControl>
                   <FormMessage />
@@ -72,16 +75,16 @@ export const LoginForm = (props: any) => {
             />
             <FormField
               control={form.control}
-              name="password"
+              name={LOGIN.PASSWORD.NAME}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel>{LOGIN.PASSWORD.LABEL}</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
-                      type="password"
+                      type={LOGIN.PASSWORD.TYPE}
                       disabled={isPending}
-                      placeholder="******"
+                      placeholder={LOGIN.PASSWORD.PLACEHOLDER}
                     />
                   </FormControl>
                   <FormMessage />
@@ -90,24 +93,22 @@ export const LoginForm = (props: any) => {
             />
             <FormField
               control={form.control}
-              name="portal"
+              name={LOGIN.PORTAL.NAME}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Login to</FormLabel>
+                  <FormLabel>{LOGIN.PORTAL.LABEL}</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={"dashboard"}
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select portal to login" />
+                        <SelectValue placeholder={LOGIN.PORTAL.PLACEHOLDER} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
                       <SelectItem value="dashboard">Dashboard</SelectItem>
-                      <SelectItem defaultChecked value="trading">
-                        Trading
-                      </SelectItem>
+                      <SelectItem value="trading">Trading</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -115,38 +116,28 @@ export const LoginForm = (props: any) => {
               )}
             />
           </div>
-          <Button type="submit" disabled={isPending} className="w-full">
-            Proceed
-          </Button>
+          <BtnProceed disabled={isPending} />
         </form>
       </Form>
       <div className="mt-1 flex justify-between">
-        <Button
-          size="sm"
-          variant="link"
-          className="p-0 font-normal"
+        <BtnNavigation
+          label={NAVIGATION.REGISTER}
           onClick={() =>
             props.setProcess((prev: any) => ({
               ...prev,
               flow: PROCESS_MODE.REGISTER,
             }))
           }
-        >
-          Create new account?
-        </Button>
-        <Button
-          size="sm"
-          variant="link"
-          className="p-0 font-normal"
+        />
+        <BtnNavigation
+          label={NAVIGATION.FORGOT}
           onClick={() =>
             props.setProcess((prev: any) => ({
               ...prev,
               flow: PROCESS_MODE.RESET,
             }))
           }
-        >
-          Forgot password?
-        </Button>
+        />
       </div>
     </CardWrapper>
   );

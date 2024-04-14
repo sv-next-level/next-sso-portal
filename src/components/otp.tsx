@@ -4,6 +4,7 @@ import * as z from "zod";
 import { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { OTP } from "@/const/label";
 
 import {
   Form,
@@ -22,7 +23,10 @@ import {
 import { OTPSchema } from "@/schemas/auth";
 import { PROCESS_MODE } from "@/config/site";
 import { Button } from "@/components/ui/button";
+import { NAVIGATION } from "@/const/navigation";
 import { CardWrapper } from "@/components/card-wrapper";
+import { BtnProceed } from "@/components/button/proceed";
+import { BtnNavigation } from "@/components/button/navigation";
 
 export const OTPForm = (props: any) => {
   const [isPending, startTransition] = useTransition();
@@ -30,7 +34,7 @@ export const OTPForm = (props: any) => {
   const form = useForm<z.infer<typeof OTPSchema>>({
     resolver: zodResolver(OTPSchema),
     defaultValues: {
-      otp: "",
+      [OTP.OTP.NAME]: "",
     },
   });
 
@@ -48,16 +52,16 @@ export const OTPForm = (props: any) => {
   };
 
   return (
-    <CardWrapper headerLabel="Email verification">
+    <CardWrapper headerLabel={OTP.HEADER}>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <div className="space-y-4">
+          <div className="flex justify-center space-y-4">
             <FormField
               control={form.control}
-              name="otp"
+              name={OTP.OTP.NAME}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>One-Time Password</FormLabel>
+                  <FormLabel>{OTP.OTP.LABEL}</FormLabel>
                   <FormControl>
                     <InputOTP maxLength={6} {...field}>
                       <InputOTPGroup>
@@ -80,17 +84,15 @@ export const OTPForm = (props: any) => {
                       </InputOTPGroup>
                     </InputOTP>
                   </FormControl>
-                  <FormDescription>
-                    Please enter the one-time password sent to your email.
+                  <FormDescription className="w-[244px] sm:w-full">
+                    {OTP.OTP.DESCRIPTION}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
           </div>
-          <Button type="submit" disabled={isPending} className="w-full">
-            Proceed
-          </Button>
+          <BtnProceed disabled={isPending} />
         </form>
       </Form>
       <div className="mt-1 flex justify-between">
@@ -100,22 +102,18 @@ export const OTPForm = (props: any) => {
           </Button>
         ) : (
           <Button size="sm" variant="link" className="p-0 font-normal">
-            Send again?
+            {NAVIGATION.OTP_AGAIN}
           </Button>
         )}
-        <Button
-          size="sm"
-          variant="link"
-          className="p-0 font-normal"
+        <BtnNavigation
+          label={NAVIGATION.LOGIN}
           onClick={() =>
             props.setProcess((prev: any) => ({
               ...prev,
               flow: PROCESS_MODE.LOGIN,
             }))
           }
-        >
-          Back to login?
-        </Button>
+        />
       </div>
     </CardWrapper>
   );

@@ -1,89 +1,102 @@
 import * as z from "zod";
 
-export const LoginSchema = z.object({
-  email: z.string().email({
-    message: "Email is required",
-  }),
-  password: z.string().min(1, {
-    message: "Password is required",
-  }),
-  portal: z.string({
-    required_error: "Please select an portal to login.",
-  }),
-});
-// .refine((data) => !/[^\d]/.test(data?.code as string), {
-//   message: "It should be numbers only",
-//   path: ["code"],
-// });
+import { ZOD } from "@/const/error";
+import * as LABEL from "@/const/label";
+import { emailModifierRegex, numbersOnlyRegex } from "@/const/regexp";
 
-export const RegisterSchema = z.object({
-  email: z.string().email({
-    message: "Email is required",
-  }),
-  firstName: z.string().min(1, {
-    message: "First name is required",
-  }),
-  lastName: z.string().min(1, {
-    message: "Last name is required",
-  }),
-});
+export const LoginSchema = z
+  .object({
+    [LABEL.LOGIN.EMAIL.NAME]: z
+      .string()
+      .min(1, {
+        message: ZOD.EMAIL.REQUIRED,
+      })
+      .email({
+        message: ZOD.EMAIL.INVALID,
+      }),
+    [LABEL.LOGIN.PASSWORD.NAME]: z.string().min(1, {
+      message: ZOD.PASSWORD.REQUIRED,
+    }),
+    [LABEL.LOGIN.PORTAL.NAME]: z.string({
+      required_error: ZOD.PORTAL.SELECT,
+    }),
+  })
+  .refine((data) => !emailModifierRegex.test(data[LABEL.LOGIN.EMAIL.NAME]), {
+    message: ZOD.EMAIL.MODIFIER,
+    path: [LABEL.LOGIN.EMAIL.NAME],
+  });
+
+export const RegisterSchema = z
+  .object({
+    [LABEL.REGISTER.EMAIL.NAME]: z
+      .string()
+      .min(1, {
+        message: ZOD.EMAIL.REQUIRED,
+      })
+      .email({
+        message: ZOD.EMAIL.INVALID,
+      }),
+    [LABEL.REGISTER.FIRST_NAME.NAME]: z.string().min(1, {
+      message: ZOD.NAME.REQUIRED.FIRST,
+    }),
+    [LABEL.REGISTER.LAST_NAME.NAME]: z.string().min(1, {
+      message: ZOD.NAME.REQUIRED.LAST,
+    }),
+  })
+  .refine((data) => !emailModifierRegex.test(data[LABEL.REGISTER.EMAIL.NAME]), {
+    message: ZOD.EMAIL.MODIFIER,
+    path: [LABEL.REGISTER.EMAIL.NAME],
+  });
 
 export const OTPSchema = z
   .object({
-    otp: z.string().min(6, { message: "It should be 6 numbers" }),
+    [LABEL.OTP.OTP.NAME]: z.string().length(6, { message: ZOD.OTP.LENGTH_6 }),
   })
-  .refine((data) => !/[^\d]/.test(data.otp.trim()), {
-    message: "It should be numbers only",
-    path: ["otp"],
+  .refine((data) => !numbersOnlyRegex.test(data[LABEL.OTP.OTP.NAME].trim()), {
+    message: ZOD.OTP.NUM_ONLY,
+    path: [LABEL.OTP.OTP.NAME],
   });
 
-export const ResetPasswordSchema = z.object({
-  email: z.string().email({
-    message: "Email is required",
-  }),
-});
+export const ResetPasswordSchema = z
+  .object({
+    [LABEL.RESET.EMAIL.NAME]: z
+      .string()
+      .min(1, {
+        message: ZOD.EMAIL.REQUIRED,
+      })
+      .email({
+        message: ZOD.EMAIL.INVALID,
+      }),
+  })
+  .refine((data) => !emailModifierRegex.test(data[LABEL.RESET.EMAIL.NAME]), {
+    message: ZOD.EMAIL.MODIFIER,
+    path: [LABEL.RESET.EMAIL.NAME],
+  });
 
 export const CreatePasswordSchema = z
   .object({
-    password: z.string().min(6, {
-      message: "Password should be at least 6 characters",
-    }),
-    confirmPassword: z.string().min(6, {
-      message: "Password should be at least 6 characters",
-    }),
+    [LABEL.PASSWORD.PASSWORD.NAME]: z
+      .string()
+      .min(1, {
+        message: ZOD.PASSWORD.REQUIRED,
+      })
+      .min(6, {
+        message: ZOD.PASSWORD.MINIMUM_6,
+      }),
+    [LABEL.PASSWORD.CONFIRM.NAME]: z
+      .string()
+      .min(1, {
+        message: ZOD.PASSWORD.REQUIRED,
+      })
+      .min(6, {
+        message: ZOD.PASSWORD.MINIMUM_6,
+      }),
   })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"],
-  });
-
-// unused
-export const TwoFactorToggleSchema = z.object({
-  id: z.string(),
-  toggle: z.boolean(),
-});
-
-export const ChangePasswordSchema = z
-  .object({
-    id: z.string(),
-    currentPassword: z.string().min(6, {
-      message: "Password should be at least 6 characters",
-    }),
-    newPassword: z.string().min(6, {
-      message: "Password should be at least 6 characters",
-    }),
-    confirmPassword: z.string().min(6, {
-      message: "Password should be at least 6 characters",
-    }),
-  })
-  .refine((data) => data.newPassword === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"],
-  });
-
-export const ForgotPasswordSchema = z.object({
-  id: z.string(),
-  email: z.boolean(),
-  sms: z.boolean().optional(),
-  whatsapp: z.boolean().optional(),
-});
+  .refine(
+    (data) =>
+      data[LABEL.PASSWORD.PASSWORD.NAME] === data[LABEL.PASSWORD.CONFIRM.NAME],
+    {
+      message: ZOD.PASSWORD.MATCH,
+      path: [LABEL.PASSWORD.CONFIRM.NAME],
+    }
+  );

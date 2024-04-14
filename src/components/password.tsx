@@ -13,11 +13,14 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { PASSWORD } from "@/const/label";
 import { PROCESS_MODE } from "@/config/site";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { NAVIGATION } from "@/const/navigation";
 import { CreatePasswordSchema } from "@/schemas/auth";
 import { CardWrapper } from "@/components/card-wrapper";
+import { BtnProceed } from "@/components/button/proceed";
+import { BtnNavigation } from "@/components/button/navigation";
 
 export const CreatePasswordForm = (props: any) => {
   const [isPending, startTransition] = useTransition();
@@ -25,39 +28,40 @@ export const CreatePasswordForm = (props: any) => {
   const form = useForm<z.infer<typeof CreatePasswordSchema>>({
     resolver: zodResolver(CreatePasswordSchema),
     defaultValues: {
-      password: "",
-      confirmPassword: "",
+      [PASSWORD.PASSWORD.NAME]: "",
+      [PASSWORD.CONFIRM.NAME]: "",
     },
   });
 
   const onSubmit = (values: z.infer<typeof CreatePasswordSchema>) => {
     console.log("🚀 ~ onSubmit ~ values:", values);
     startTransition(() => {
-      if (props.process.flow === PROCESS_MODE.REGISTER) {
-        props.setForm(() => PROCESS_MODE.LOGIN);
-      } else if (props.process.flow === PROCESS_MODE.RESET) {
+      if (
+        props.process.flow === PROCESS_MODE.RESET ||
+        props.process.flow === PROCESS_MODE.REGISTER
+      ) {
         props.setForm(() => PROCESS_MODE.LOGIN);
       }
     });
   };
 
   return (
-    <CardWrapper headerLabel="Create new password">
+    <CardWrapper headerLabel={PASSWORD.HEADER}>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-4">
             <FormField
               control={form.control}
-              name="password"
+              name={PASSWORD.PASSWORD.NAME}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel>{PASSWORD.PASSWORD.LABEL}</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
-                      type="password"
+                      type={PASSWORD.PASSWORD.TYPE}
                       disabled={isPending}
-                      placeholder="******"
+                      placeholder={PASSWORD.PASSWORD.PLACEHOLDER}
                     />
                   </FormControl>
                   <FormMessage />
@@ -66,16 +70,16 @@ export const CreatePasswordForm = (props: any) => {
             />
             <FormField
               control={form.control}
-              name="confirmPassword"
+              name={PASSWORD.CONFIRM.NAME}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Confirm Password</FormLabel>
+                  <FormLabel>{PASSWORD.CONFIRM.LABEL}</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
-                      type="password"
+                      type={PASSWORD.CONFIRM.TYPE}
                       disabled={isPending}
-                      placeholder="******"
+                      placeholder={PASSWORD.CONFIRM.PLACEHOLDER}
                     />
                   </FormControl>
                   <FormMessage />
@@ -83,38 +87,28 @@ export const CreatePasswordForm = (props: any) => {
               )}
             />
           </div>
-          <Button type="submit" disabled={isPending} className="w-full">
-            Proceed
-          </Button>
+          <BtnProceed disabled={isPending} />
         </form>
       </Form>
       <div className="mt-1 flex justify-between">
-        <Button
-          size="sm"
-          variant="link"
-          className="p-0 font-normal"
+        <BtnNavigation
+          label={NAVIGATION.REGISTER}
           onClick={() =>
             props.setProcess((prev: any) => ({
               ...prev,
               flow: PROCESS_MODE.REGISTER,
             }))
           }
-        >
-          Create new account?
-        </Button>
-        <Button
-          size="sm"
-          variant="link"
-          className="p-0 font-normal"
+        />
+        <BtnNavigation
+          label={NAVIGATION.LOGIN}
           onClick={() =>
             props.setProcess((prev: any) => ({
               ...prev,
               flow: PROCESS_MODE.LOGIN,
             }))
           }
-        >
-          Back to login?
-        </Button>
+        />
       </div>
     </CardWrapper>
   );

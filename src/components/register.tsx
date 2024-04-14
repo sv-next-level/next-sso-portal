@@ -13,11 +13,14 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { REGISTER } from "@/const/label";
 import { PROCESS_MODE } from "@/config/site";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { NAVIGATION } from "@/const/navigation";
 import { RegisterSchema } from "@/schemas/auth";
 import { CardWrapper } from "@/components/card-wrapper";
+import { BtnProceed } from "@/components/button/proceed";
+import { BtnNavigation } from "@/components/button/navigation";
 
 export const RegisterForm = (props: any) => {
   const [isPending, startTransition] = useTransition();
@@ -25,9 +28,9 @@ export const RegisterForm = (props: any) => {
   const form = useForm<z.infer<typeof RegisterSchema>>({
     resolver: zodResolver(RegisterSchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
-      email: "",
+      [REGISTER.FIRST_NAME.NAME]: "",
+      [REGISTER.LAST_NAME.NAME]: "",
+      [REGISTER.EMAIL.NAME]: "",
     },
   });
 
@@ -41,22 +44,22 @@ export const RegisterForm = (props: any) => {
   };
 
   return (
-    <CardWrapper headerLabel="Create new account">
+    <CardWrapper headerLabel={REGISTER.HEADER}>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-4">
             <FormField
               control={form.control}
-              name="firstName"
+              name={REGISTER.FIRST_NAME.NAME}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>First Name</FormLabel>
+                  <FormLabel>{REGISTER.FIRST_NAME.LABEL}</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
-                      type="text"
+                      type={REGISTER.FIRST_NAME.TYPE}
                       disabled={isPending}
-                      placeholder="john"
+                      placeholder={REGISTER.FIRST_NAME.PLACEHOLDER}
                     />
                   </FormControl>
                   <FormMessage />
@@ -65,16 +68,16 @@ export const RegisterForm = (props: any) => {
             />
             <FormField
               control={form.control}
-              name="lastName"
+              name={REGISTER.LAST_NAME.NAME}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Last Name</FormLabel>
+                  <FormLabel>{REGISTER.LAST_NAME.LABEL}</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
-                      type="text"
+                      type={REGISTER.LAST_NAME.TYPE}
                       disabled={isPending}
-                      placeholder="doe"
+                      placeholder={REGISTER.LAST_NAME.PLACEHOLDER}
                     />
                   </FormControl>
                   <FormMessage />
@@ -83,16 +86,16 @@ export const RegisterForm = (props: any) => {
             />
             <FormField
               control={form.control}
-              name="email"
+              name={REGISTER.EMAIL.NAME}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>{REGISTER.EMAIL.LABEL}</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
-                      type="email"
+                      type={REGISTER.EMAIL.TYPE}
                       disabled={isPending}
-                      placeholder="john.doe@example.com"
+                      placeholder={REGISTER.EMAIL.PLACEHOLDER}
                     />
                   </FormControl>
                   <FormMessage />
@@ -100,27 +103,19 @@ export const RegisterForm = (props: any) => {
               )}
             />
           </div>
-          {/* <FormError message={error} />
-          <FormSuccess message={success} /> */}
-          <Button type="submit" disabled={isPending} className="w-full">
-            Proceed
-          </Button>
+          <BtnProceed disabled={isPending} />
         </form>
       </Form>
       <div className="mt-1 flex justify-between">
-        <Button
-          size="sm"
-          variant="link"
-          className="p-0 font-normal"
+        <BtnNavigation
+          label={NAVIGATION.LOGIN}
           onClick={() =>
             props.setProcess((prev: any) => ({
               ...prev,
               flow: PROCESS_MODE.LOGIN,
             }))
           }
-        >
-          Back to login?
-        </Button>
+        />
       </div>
     </CardWrapper>
   );

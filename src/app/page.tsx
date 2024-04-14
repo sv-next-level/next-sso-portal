@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from "react";
 
-import { OTPForm } from "@/components/otp";
 import { PROCESS_MODE } from "@/config/site";
-import { LoginForm } from "@/components/login";
-import { RegisterForm } from "@/components/register";
-import { ResetPasswordForm } from "@/components/reset";
-import { CreatePasswordForm } from "@/components/password";
+import { OTPForm } from "@/components/content/otp";
+import { LoginForm } from "@/components/content/login";
+import { RegisterForm } from "@/components/content/register";
+import { ResetPasswordForm } from "@/components/content/reset";
+import { CreatePasswordForm } from "@/components/content/password";
 
 export default function Home() {
   const [process, setProcess] = useState<{ flow: PROCESS_MODE }>({

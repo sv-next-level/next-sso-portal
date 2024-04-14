@@ -2,13 +2,24 @@
 
 import { Button } from "@/components/ui/button";
 
-export const BtnNavigation = (props: any) => {
+interface BtnNavigationProps {
+  flow: string;
+  label: string;
+  setProcess: React.Dispatch<React.SetStateAction<string>>;
+}
+
+export const BtnNavigation = (props: Readonly<BtnNavigationProps>) => {
   return (
     <Button
       size="sm"
       variant="link"
       className="p-0 font-normal"
-      onClick={props.onClick}
+      onClick={() =>
+        props.setProcess((prev: any) => ({
+          ...prev,
+          flow: props.flow,
+        }))
+      }
     >
       {props.label}
     </Button>

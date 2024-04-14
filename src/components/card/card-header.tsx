@@ -1,10 +1,12 @@
+"use client";
+
 import Image from "next/image";
 
 interface HeaderProps {
   label: string;
 }
 
-export const Header = ({ label }: HeaderProps) => {
+export const Header = (props: Readonly<HeaderProps>) => {
   return (
     <div className="flex w-full flex-col items-center justify-center gap-y-4">
       <Image
@@ -15,7 +17,7 @@ export const Header = ({ label }: HeaderProps) => {
         height={50}
         priority
       />
-      <h1 className="text-xl font-medium">{label}</h1>
+      <h1 className="text-xl font-medium">{props.label}</h1>
     </div>
   );
 };

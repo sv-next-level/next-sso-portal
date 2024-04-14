@@ -44,6 +44,7 @@ export const REGISTER = {
 export const OTP = {
   HEADER: "Verification",
   OTP: {
+    LENGTH: 6,
     NAME: "otp",
     LABEL: "One-Time Password",
     DESCRIPTION: "Please enter the one-time password sent to your email.",

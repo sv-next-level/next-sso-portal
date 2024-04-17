@@ -1,8 +1,10 @@
+export const EMAIL_BLACKLISTED_CHARS = "+";
+
 export const ZOD = {
   EMAIL: {
     INVALID: "Invalid email",
     REQUIRED: "Email is required",
-    MODIFIER: "Email modifier '+' is not allowed",
+    MODIFIER: `Email with ${EMAIL_BLACKLISTED_CHARS} char are not allowed`,
   },
   PASSWORD: {
     MATCH: "Passwords don't match",

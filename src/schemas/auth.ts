@@ -2,7 +2,7 @@ import * as z from "zod";
 
 import { ZOD } from "@/const/error";
 import * as LABEL from "@/const/label";
-import { emailModifierRegex, numbersOnlyRegex } from "@/const/regexp";
+import { emailBlacklistedCharsRegex, numbersOnlyRegex } from "@/const/regexp";
 
 export const LoginSchema = z
   .object({
@@ -21,10 +21,13 @@ export const LoginSchema = z
       required_error: ZOD.PORTAL.SELECT,
     }),
   })
-  .refine((data) => !emailModifierRegex.test(data[LABEL.LOGIN.EMAIL.NAME]), {
-    message: ZOD.EMAIL.MODIFIER,
-    path: [LABEL.LOGIN.EMAIL.NAME],
-  });
+  .refine(
+    (data) => !emailBlacklistedCharsRegex.test(data[LABEL.LOGIN.EMAIL.NAME]),
+    {
+      message: ZOD.EMAIL.MODIFIER,
+      path: [LABEL.LOGIN.EMAIL.NAME],
+    }
+  );
 
 export const RegisterSchema = z
   .object({
@@ -43,10 +46,13 @@ export const RegisterSchema = z
       message: ZOD.NAME.REQUIRED.LAST,
     }),
   })
-  .refine((data) => !emailModifierRegex.test(data[LABEL.REGISTER.EMAIL.NAME]), {
-    message: ZOD.EMAIL.MODIFIER,
-    path: [LABEL.REGISTER.EMAIL.NAME],
-  });
+  .refine(
+    (data) => !emailBlacklistedCharsRegex.test(data[LABEL.REGISTER.EMAIL.NAME]),
+    {
+      message: ZOD.EMAIL.MODIFIER,
+      path: [LABEL.REGISTER.EMAIL.NAME],
+    }
+  );
 
 export const OTPSchema = z
   .object({
@@ -68,10 +74,13 @@ export const ResetPasswordSchema = z
         message: ZOD.EMAIL.INVALID,
       }),
   })
-  .refine((data) => !emailModifierRegex.test(data[LABEL.RESET.EMAIL.NAME]), {
-    message: ZOD.EMAIL.MODIFIER,
-    path: [LABEL.RESET.EMAIL.NAME],
-  });
+  .refine(
+    (data) => !emailBlacklistedCharsRegex.test(data[LABEL.RESET.EMAIL.NAME]),
+    {
+      message: ZOD.EMAIL.MODIFIER,
+      path: [LABEL.RESET.EMAIL.NAME],
+    }
+  );
 
 export const CreatePasswordSchema = z
   .object({

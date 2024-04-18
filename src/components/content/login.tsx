@@ -31,7 +31,8 @@ export const LoginForm = (props: any) => {
 
   const onSubmit = (values: z.infer<typeof LoginSchema>) => {
     console.log("🚀 ~ onSubmit ~ values:", values);
-    startTransition(() => {
+    startTransition(async () => {
+      await new Promise((res) => setTimeout(res, 10000));
       if (props.process.flow === PROCESS_MODE.LOGIN) {
         props.setForm(PROCESS_MODE.OTP);
       }

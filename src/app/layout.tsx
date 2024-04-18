@@ -17,10 +17,10 @@ interface RootLayoutProps {
   children: React.ReactNode;
 }
 
-export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
+export default function RootLayout(props: Readonly<RootLayoutProps>) {
   return (
     <html lang="en">
-      <body className={`${inter.className} bg-zinc-300`}>{children}</body>
+      <body className={`${inter.className} bg-zinc-300`}>{props.children}</body>
     </html>
   );
 }

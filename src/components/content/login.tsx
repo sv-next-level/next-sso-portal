@@ -1,6 +1,7 @@
 "use client";
 
 import * as z from "zod";
+import { toast } from "sonner";
 import { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,6 +17,7 @@ import { BtnNavigation } from "@/components/button/navigation";
 import { ContentFooter } from "@/components/content/content-footer";
 import { InputRegularField } from "@/components/form/field/input-regular";
 import { InputDropDownField } from "@/components/form/field/input-drop-down";
+import { login } from "@/action/login";
 
 export const LoginForm = (props: any) => {
   const [isPending, startTransition] = useTransition();
@@ -29,12 +31,31 @@ export const LoginForm = (props: any) => {
     },
   });
 
+  const promise = async (values: z.infer<typeof LoginSchema>) => {
+    const res = await login(values);
+    console.log("🚀 ~ promise ~ res:", res);
+    return res;
+  };
+
   const onSubmit = (values: z.infer<typeof LoginSchema>) => {
-    console.log("🚀 ~ onSubmit ~ values:", values);
-    startTransition(async () => {
-      await new Promise((res) => setTimeout(res, 10000));
-      if (props.process.flow === PROCESS_MODE.LOGIN) {
-        props.setForm(PROCESS_MODE.OTP);
+    startTransition(() => {
+      try {
+        toast.promise(promise(values), {
+          loading: "Loading...",
+          success: (data) => {
+            console.log("🚀 ~ toast.promise ~ data:", data);
+            return `Login successfully`;
+          },
+          error: (data) => {
+            return `${data.message}`;
+          },
+        });
+
+        if (props.process.flow === PROCESS_MODE.LOGIN) {
+          props.setForm(PROCESS_MODE.OTP);
+        }
+      } catch (error) {
+        console.log("🚀 ~ startTransition ~ error:", error);
       }
     });
   };

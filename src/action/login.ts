@@ -25,7 +25,7 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
   console.log("🚀 ~ authorize ~ res:", response);
   const res = response.data;
 
-  if ("status" in res) {
+  if (typeof res === "object" && "status" in res) {
     console.log("🚀 ~ login ~ res:", res.message);
     throw new Error(res.message);
   }

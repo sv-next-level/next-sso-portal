@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { LOGIN } from "@/const/label";
-import { PORTAl } from "@/const/portal";
+import { PORTAL } from "@/const/portal";
 import { LoginSchema } from "@/schemas/auth";
 import { PROCESS_MODE } from "@/config/site";
 import { NAVIGATION } from "@/const/navigation";
@@ -18,6 +18,7 @@ import { ContentFooter } from "@/components/content/content-footer";
 import { InputRegularField } from "@/components/form/field/input-regular";
 import { InputDropDownField } from "@/components/form/field/input-drop-down";
 import { login } from "@/action/login";
+import { URL } from "@/config/env";
 
 export const LoginForm = (props: any) => {
   const [isPending, startTransition] = useTransition();
@@ -27,14 +28,31 @@ export const LoginForm = (props: any) => {
     defaultValues: {
       [LOGIN.EMAIL.NAME]: "",
       [LOGIN.PASSWORD.NAME]: "",
-      [LOGIN.PORTAL.NAME]: PORTAl.DASHBOARD,
+      [LOGIN.PORTAL.NAME]: PORTAL.DASHBOARD,
     },
   });
 
   const promise = async (values: z.infer<typeof LoginSchema>) => {
     const res = await login(values);
-    console.log("🚀 ~ promise ~ res:", res);
     return res;
+  };
+
+  const selectPortalLink = (portal: string): string => {
+    switch (portal) {
+      case PORTAL.DASHBOARD:
+        return URL.DASHBOARD;
+      case PORTAL.TRADING:
+        return URL.TRADING;
+      default:
+        return "";
+    }
+  };
+
+  const onSuccess = (data: string, portal: string) => {
+    console.log("🚀 ~ success ~ data:", data);
+    console.log("🚀 ~ success ~ portal:", portal);
+    const url = selectPortalLink(portal);
+    window.location.replace(`${url}?data=${data}`);
   };
 
   const onSubmit = (values: z.infer<typeof LoginSchema>) => {
@@ -42,8 +60,8 @@ export const LoginForm = (props: any) => {
       try {
         toast.promise(promise(values), {
           loading: "Loading...",
-          success: (data) => {
-            console.log("🚀 ~ toast.promise ~ data:", data);
+          success: (data: string) => {
+            onSuccess(data, values.portal);
             return `Login successfully`;
           },
           error: (data) => {
@@ -81,7 +99,7 @@ export const LoginForm = (props: any) => {
         />
         <InputDropDownField
           form={form}
-          options={PORTAl}
+          options={PORTAL}
           name={LOGIN.PORTAL.NAME}
           label={LOGIN.PORTAL.LABEL}
           placeholder={LOGIN.PORTAL.PLACEHOLDER}

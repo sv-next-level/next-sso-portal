@@ -1,4 +1,4 @@
-export const PORTAl = {
-  DASHBOARD: "DASHBOARD",
-  TRADING: "TRADING",
-};
+export enum PORTAL {
+  DASHBOARD = "DASHBOARD",
+  TRADING = "TRADING",
+}

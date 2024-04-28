@@ -2,7 +2,7 @@
 
 import * as z from "zod";
 import { toast } from "sonner";
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -21,6 +21,7 @@ import { InputDropDownField } from "@/components/form/field/input-drop-down";
 
 export const LoginForm = (props: any) => {
   const [isPending, startTransition] = useTransition();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
@@ -61,6 +62,7 @@ export const LoginForm = (props: any) => {
   const onSubmit = (values: z.infer<typeof LoginSchema>) => {
     startTransition(() => {
       try {
+        setIsLoading(true);
         toast.promise(promise(values), {
           loading: "Loading...",
           success: (data: any) => {
@@ -72,16 +74,22 @@ export const LoginForm = (props: any) => {
         });
       } catch (error) {
         console.log("🚀 ~ startTransition ~ error:", error);
+      } finally {
+        setIsLoading(false);
       }
     });
   };
 
   return (
     <CardWrapper headerLabel={LOGIN.HEADER}>
-      <AuthForm form={form} onSubmit={onSubmit} disabled={isPending}>
+      <AuthForm
+        form={form}
+        onSubmit={onSubmit}
+        disabled={isPending || isLoading}
+      >
         <InputRegularField
           form={form}
-          disabled={isPending}
+          disabled={isPending || isLoading}
           name={LOGIN.EMAIL.NAME}
           type={LOGIN.EMAIL.TYPE}
           label={LOGIN.EMAIL.LABEL}
@@ -89,7 +97,7 @@ export const LoginForm = (props: any) => {
         />
         <InputRegularField
           form={form}
-          disabled={isPending}
+          disabled={isPending || isLoading}
           name={LOGIN.PASSWORD.NAME}
           type={LOGIN.PASSWORD.TYPE}
           label={LOGIN.PASSWORD.LABEL}
@@ -98,7 +106,7 @@ export const LoginForm = (props: any) => {
         <InputDropDownField
           form={form}
           options={PORTAL}
-          disabled={isPending}
+          disabled={isPending || isLoading}
           name={LOGIN.PORTAL.NAME}
           label={LOGIN.PORTAL.LABEL}
           placeholder={LOGIN.PORTAL.PLACEHOLDER}

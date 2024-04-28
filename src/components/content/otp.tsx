@@ -21,10 +21,12 @@ import { PORTAL } from "@/const/portal";
 import { URL } from "@/config/env";
 
 export const OTPForm = (props: any) => {
+  const [isPending, startTransition] = useTransition();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const [time, setTime] = useState<number>(
     (new Date(props.heap.expires_after).getTime() - new Date().getTime()) / 1000
   );
-  const [isPending, startTransition] = useTransition();
   const [minutes, setMinutes] = useState<number>(Math.floor(time / 60));
   const [seconds, setSeconds] = useState<number>(Math.floor(time % 60));
 
@@ -119,6 +121,7 @@ export const OTPForm = (props: any) => {
   const onSubmit = (values: z.infer<typeof OTPSchema>) => {
     startTransition(() => {
       try {
+        setIsLoading(true);
         toast.promise(submit(values), {
           loading: "Loading...",
           success: (data: any) => {
@@ -130,6 +133,8 @@ export const OTPForm = (props: any) => {
         });
       } catch (error) {
         console.log("🚀 ~ startTransition ~ error:", error);
+      } finally {
+        setIsLoading(false);
       }
     });
   };
@@ -140,6 +145,7 @@ export const OTPForm = (props: any) => {
     };
     startTransition(() => {
       try {
+        setIsLoading(true);
         toast.promise(resend(values), {
           loading: "Loading...",
           success: (data: any) => {
@@ -151,16 +157,22 @@ export const OTPForm = (props: any) => {
         });
       } catch (error) {
         console.log("🚀 ~ startTransition ~ error:", error);
+      } finally {
+        setIsLoading(false);
       }
     });
   };
 
   return (
     <CardWrapper headerLabel={OTP.HEADER}>
-      <AuthForm form={form} onSubmit={onSubmit} disabled={isPending}>
+      <AuthForm
+        form={form}
+        onSubmit={onSubmit}
+        disabled={isPending || isLoading}
+      >
         <InputOTPField
           form={form}
-          disabled={isPending}
+          disabled={isPending || isLoading}
           name={OTP.OTP.NAME}
           label={OTP.OTP.LABEL}
           length={OTP.OTP.LENGTH}
@@ -182,7 +194,7 @@ export const OTPForm = (props: any) => {
             size="sm"
             variant="link"
             onClick={onResend}
-            disabled={isPending}
+            disabled={isPending || isLoading}
             className="p-0 font-normal"
           >
             {NAVIGATION.OTP_AGAIN}

@@ -1,7 +1,7 @@
 "use client";
 
 import * as z from "zod";
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -14,9 +14,13 @@ import { CardWrapper } from "@/components/card/card-wrapper";
 import { BtnNavigation } from "@/components/button/navigation";
 import { ContentFooter } from "@/components/content/content-footer";
 import { InputRegularField } from "@/components/form/field/input-regular";
+import { register, sendOTP } from "@/action";
+import { toast } from "sonner";
+import { PORTAL } from "@/const/portal";
 
 export const RegisterForm = (props: any) => {
   const [isPending, startTransition] = useTransition();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const form = useForm<z.infer<typeof RegisterSchema>>({
     resolver: zodResolver(RegisterSchema),
@@ -27,21 +31,70 @@ export const RegisterForm = (props: any) => {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof RegisterSchema>) => {
-    console.log("🚀 ~ onSubmit ~ values:", values);
-    startTransition(() => {
+  const promise = async (values: z.infer<typeof RegisterSchema>) => {
+    const res = await register(values);
+
+    if ("userId" in res.data && res.data.userId) {
+      const otpRes = await sendOTP({
+        email: values.email,
+        portal: values.portal,
+      });
+
+      const obj = {
+        user_id: res.data.userId,
+        portal: res.data.portal,
+        relay_id: otpRes.data.relay_id,
+        expires_after: otpRes.data.expires_after,
+      };
+      props.setHeap((prev: any) => {
+        return { ...prev, ...obj };
+      });
+
       if (props.process.flow === PROCESS_MODE.REGISTER) {
-        props.setForm(() => PROCESS_MODE.OTP);
+        props.setForm(PROCESS_MODE.OTP);
+      }
+      return "2FA email sent successfully";
+    }
+    return res;
+  };
+
+  const onSubmit = (values: z.infer<typeof RegisterSchema>) => {
+    startTransition(() => {
+      try {
+        setIsLoading(true);
+        toast.promise(
+          promise({
+            ...values,
+            portal: PORTAL.DASHBOARD,
+          }),
+          {
+            loading: "Loading...",
+            success: (data: any) => {
+              return data;
+            },
+            error: (data) => {
+              return data.message;
+            },
+          }
+        );
+      } catch (error) {
+        console.log("🚀 ~ startTransition ~ error:", error);
+      } finally {
+        setIsLoading(false);
       }
     });
   };
 
   return (
     <CardWrapper headerLabel={REGISTER.HEADER}>
-      <AuthForm form={form} onSubmit={onSubmit} disabled={isPending}>
+      <AuthForm
+        form={form}
+        onSubmit={onSubmit}
+        disabled={isPending || isLoading}
+      >
         <InputRegularField
           form={form}
-          disabled={isPending}
+          disabled={isPending || isLoading}
           name={REGISTER.FIRST_NAME.NAME}
           type={REGISTER.FIRST_NAME.TYPE}
           label={REGISTER.FIRST_NAME.LABEL}
@@ -49,7 +102,7 @@ export const RegisterForm = (props: any) => {
         />
         <InputRegularField
           form={form}
-          disabled={isPending}
+          disabled={isPending || isLoading}
           name={REGISTER.LAST_NAME.NAME}
           type={REGISTER.LAST_NAME.TYPE}
           label={REGISTER.LAST_NAME.LABEL}
@@ -57,7 +110,7 @@ export const RegisterForm = (props: any) => {
         />
         <InputRegularField
           form={form}
-          disabled={isPending}
+          disabled={isPending || isLoading}
           name={REGISTER.EMAIL.NAME}
           type={REGISTER.EMAIL.TYPE}
           label={REGISTER.EMAIL.LABEL}

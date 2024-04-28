@@ -1,5 +1,5 @@
 export const ENV = {
-  PORT: String(process.env.NEXT_PUBLIC_PORT),
+  PORT: String(process.env.PORT),
   APP_ENV: String(process.env.NEXT_PUBLIC_APP_ENV),
 };
 

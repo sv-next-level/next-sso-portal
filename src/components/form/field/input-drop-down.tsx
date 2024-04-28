@@ -31,6 +31,7 @@ interface InputDropDownFieldProps {
   options: {
     [x: string]: string;
   };
+  disabled: boolean;
   placeholder: string;
 }
 
@@ -49,7 +50,7 @@ export const InputDropDownField = (
             defaultValue={props.form.getValues(props.name)}
           >
             <FormControl>
-              <SelectTrigger>
+              <SelectTrigger disabled={props.disabled}>
                 <SelectValue placeholder={props.placeholder} />
               </SelectTrigger>
             </FormControl>

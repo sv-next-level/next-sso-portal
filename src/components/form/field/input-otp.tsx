@@ -27,6 +27,7 @@ interface InputOTPField {
   name: string;
   label: string;
   length: number;
+  disabled: boolean;
   description: string;
 }
 
@@ -51,7 +52,11 @@ export const InputOTPField = (props: Readonly<InputOTPField>) => {
         <FormItem>
           <FormLabel>{props.label}</FormLabel>
           <FormControl>
-            <InputOTP maxLength={props.length} {...field}>
+            <InputOTP
+              disabled={props.disabled}
+              maxLength={props.length}
+              {...field}
+            >
               {inputOTPSlotList}
             </InputOTP>
           </FormControl>

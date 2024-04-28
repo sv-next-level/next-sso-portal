@@ -1,15 +1,13 @@
 "use server";
 
-import { URL } from "@/config/env";
-import { LoginSchema } from "@/schemas/auth";
 import axios from "axios";
-import { z } from "zod";
+import { URL } from "@/config/env";
 
-export const login = async (values: z.infer<typeof LoginSchema>) => {
+export const token = async (values: any) => {
   try {
     const data: any = values;
     const method: string = "POST";
-    const url: string = `${URL.GATEWAY}/api/login`;
+    const url: string = `${URL.GATEWAY}/api/token`;
     const headers = {
       "Content-Type": "application/json",
     };

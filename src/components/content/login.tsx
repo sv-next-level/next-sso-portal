@@ -8,6 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { LOGIN } from "@/const/label";
 import { PORTAL } from "@/const/portal";
+import { login, sendOTP } from "@/action";
 import { LoginSchema } from "@/schemas/auth";
 import { PROCESS_MODE } from "@/config/site";
 import { NAVIGATION } from "@/const/navigation";
@@ -17,8 +18,6 @@ import { BtnNavigation } from "@/components/button/navigation";
 import { ContentFooter } from "@/components/content/content-footer";
 import { InputRegularField } from "@/components/form/field/input-regular";
 import { InputDropDownField } from "@/components/form/field/input-drop-down";
-import { login } from "@/action/login";
-import { URL } from "@/config/env";
 
 export const LoginForm = (props: any) => {
   const [isPending, startTransition] = useTransition();
@@ -34,25 +33,29 @@ export const LoginForm = (props: any) => {
 
   const promise = async (values: z.infer<typeof LoginSchema>) => {
     const res = await login(values);
-    return res;
-  };
 
-  const selectPortalLink = (portal: string): string => {
-    switch (portal) {
-      case PORTAL.DASHBOARD:
-        return URL.DASHBOARD;
-      case PORTAL.TRADING:
-        return URL.TRADING;
-      default:
-        return "";
+    if ("verification" in res.data && res.data.verification) {
+      const otpRes = await sendOTP({
+        email: values.email,
+        portal: values.portal,
+      });
+
+      const obj = {
+        user_id: res.data.userId,
+        portal: res.data.portal,
+        relay_id: otpRes.data.relay_id,
+        expires_after: otpRes.data.expires_after,
+      };
+      props.setHeap((prev: any) => {
+        return { ...prev, ...obj };
+      });
+
+      if (props.process.flow === PROCESS_MODE.LOGIN) {
+        props.setForm(PROCESS_MODE.OTP);
+      }
+      return "2FA email sent successfully";
     }
-  };
-
-  const onSuccess = (data: string, portal: string) => {
-    console.log("🚀 ~ success ~ data:", data);
-    console.log("🚀 ~ success ~ portal:", portal);
-    const url = selectPortalLink(portal);
-    window.location.replace(`${url}?data=${data}`);
+    return res;
   };
 
   const onSubmit = (values: z.infer<typeof LoginSchema>) => {
@@ -60,18 +63,13 @@ export const LoginForm = (props: any) => {
       try {
         toast.promise(promise(values), {
           loading: "Loading...",
-          success: (data: string) => {
-            onSuccess(data, values.portal);
-            return `Login successfully`;
+          success: (data: any) => {
+            return data;
           },
           error: (data) => {
-            return `${data.message}`;
+            return data.message;
           },
         });
-
-        if (props.process.flow === PROCESS_MODE.LOGIN) {
-          props.setForm(PROCESS_MODE.OTP);
-        }
       } catch (error) {
         console.log("🚀 ~ startTransition ~ error:", error);
       }
@@ -100,6 +98,7 @@ export const LoginForm = (props: any) => {
         <InputDropDownField
           form={form}
           options={PORTAL}
+          disabled={isPending}
           name={LOGIN.PORTAL.NAME}
           label={LOGIN.PORTAL.LABEL}
           placeholder={LOGIN.PORTAL.PLACEHOLDER}

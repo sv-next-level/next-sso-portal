@@ -15,17 +15,32 @@ export default function Home() {
   });
   const [form, setForm] = useState<PROCESS_MODE>(PROCESS_MODE.LOGIN);
   const [currentForm, setCurrentForm] = useState<JSX.Element | null>(null);
+  const [heap, setHeap] = useState<any>();
 
   const loginForm: JSX.Element = (
-    <LoginForm setForm={setForm} process={process} setProcess={setProcess} />
+    <LoginForm
+      heap={heap}
+      setHeap={setHeap}
+      setForm={setForm}
+      process={process}
+      setProcess={setProcess}
+    />
   );
 
   const registerForm: JSX.Element = (
-    <RegisterForm setForm={setForm} process={process} setProcess={setProcess} />
+    <RegisterForm
+      heap={heap}
+      setHeap={setHeap}
+      setForm={setForm}
+      process={process}
+      setProcess={setProcess}
+    />
   );
 
   const resetPasswordForm: JSX.Element = (
     <ResetPasswordForm
+      heap={heap}
+      setHeap={setHeap}
       setForm={setForm}
       process={process}
       setProcess={setProcess}
@@ -33,11 +48,19 @@ export default function Home() {
   );
 
   const OtpForm: JSX.Element = (
-    <OTPForm setForm={setForm} process={process} setProcess={setProcess} />
+    <OTPForm
+      heap={heap}
+      setHeap={setHeap}
+      setForm={setForm}
+      process={process}
+      setProcess={setProcess}
+    />
   );
 
   const createPasswordForm: JSX.Element = (
     <CreatePasswordForm
+      heap={heap}
+      setHeap={setHeap}
       setForm={setForm}
       process={process}
       setProcess={setProcess}
@@ -62,13 +85,12 @@ export default function Home() {
   };
 
   useEffect(() => {
-    console.log("🚀 ~ Home ~ process:", process);
+    setHeap({});
     setCurrentForm(current(process.flow));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [process]);
 
   useEffect(() => {
-    console.log("🚀 ~ Home ~ form:", form);
     setCurrentForm(current(form));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form]);

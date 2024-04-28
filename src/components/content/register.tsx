@@ -70,6 +70,11 @@ export const RegisterForm = (props: any) => {
           flow={PROCESS_MODE.LOGIN}
           setProcess={props.setProcess}
         />
+        <BtnNavigation
+          label={NAVIGATION.FORGOT}
+          flow={PROCESS_MODE.RESET}
+          setProcess={props.setProcess}
+        />
       </ContentFooter>
     </CardWrapper>
   );
